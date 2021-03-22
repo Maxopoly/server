@@ -102,6 +102,9 @@ class DashboardController extends Controller {
 		$systemDefault = $this->config->getAppValue('dashboard', 'layout', 'recommendations,spreed,mail,calendar');
 		$userLayout = explode(',', $this->config->getUserValue($this->userId, 'dashboard', 'layout', $systemDefault));
 		$widgets = array_map(function (IWidget $widget) {
+			if (method_exists($widget, 'getWidgetItems')) {
+				error_log($widget->getId() . ' ALORS ' . count($widget->getWidgetItems($this->userId)));
+			}
 			return [
 				'id' => $widget->getId(),
 				'title' => $widget->getTitle(),
