@@ -28,8 +28,15 @@
 				{
 					name: 'private',
 					displayName: t('settings', 'Private'),
-					tooltip: t('settings', "Don't synchronize to servers"),
+					tooltip: t('settings', "Don't synchronize to servers, don't show to local users"),
 					iconClass: 'icon-password',
+					active: false
+				},
+				{
+					name: 'local_contacts',
+					displayName: t('settings', 'Trusted Local'),
+					tooltip: t('settings', 'Only show for local users'),
+					iconClass: 'icon-contacts-dark',
 					active: false
 				},
 				{
@@ -109,11 +116,14 @@
 				case 'private':
 					this._scopes[0].active = true;
 					break;
-				case 'contacts':
+				case 'local_contacts':
 					this._scopes[1].active = true;
 					break;
-				case 'public':
+				case 'contacts':
 					this._scopes[2].active = true;
+					break;
+				case 'public':
+					this._scopes[3].active = true;
 					break;
 			}
 

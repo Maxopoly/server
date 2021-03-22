@@ -40,6 +40,8 @@ interface IAccountManager {
 
 	/** nobody can see my account details */
 	public const VISIBILITY_PRIVATE = 'private';
+	/** only contacts on the local instance, not federated */
+	public const VISIBILITY_LOCAL_CONTACTS_ONLY = 'local_contacts';
 	/** only contacts, especially trusted servers can see my contact details */
 	public const VISIBILITY_CONTACTS_ONLY = 'contacts';
 	/** every body ca see my contact detail, will be published to the lookup server */
