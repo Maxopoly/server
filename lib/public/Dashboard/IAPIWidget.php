@@ -33,5 +33,5 @@ namespace OCP\Dashboard;
  */
 interface IAPIWidget extends IWidget {
 
-	public function getWidgetItems(string $userId, ?string $since = null): ?array;
+	public function getItems(string $userId, ?string $since = null): ?array;
 }

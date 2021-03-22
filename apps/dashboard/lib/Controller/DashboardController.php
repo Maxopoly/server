@@ -35,6 +35,7 @@ use OCP\AppFramework\Http\FileDisplayResponse;
 use OCP\AppFramework\Http\JSONResponse;
 use OCP\AppFramework\Http\NotFoundResponse;
 use OCP\AppFramework\Http\TemplateResponse;
+use OCP\AppFramework\Http\DataResponse;
 use OCP\App\IAppManager;
 use OCP\AppFramework\Services\IInitialState;
 use OCP\Dashboard\IManager;
@@ -43,6 +44,8 @@ use OCP\Dashboard\RegisterWidgetEvent;
 use OCP\EventDispatcher\IEventDispatcher;
 use OCP\IConfig;
 use OCP\IRequest;
+
+use OCP\Dashboard\Model\WidgetItem;
 
 class DashboardController extends Controller {
 
@@ -102,9 +105,6 @@ class DashboardController extends Controller {
 		$systemDefault = $this->config->getAppValue('dashboard', 'layout', 'recommendations,spreed,mail,calendar');
 		$userLayout = explode(',', $this->config->getUserValue($this->userId, 'dashboard', 'layout', $systemDefault));
 		$widgets = array_map(function (IWidget $widget) {
-			if (method_exists($widget, 'getWidgetItems')) {
-				error_log($widget->getId() . ' ALORS ' . count($widget->getWidgetItems($this->userId)));
-			}
 			return [
 				'id' => $widget->getId(),
 				'title' => $widget->getTitle(),
@@ -210,5 +210,31 @@ class DashboardController extends Controller {
 			return $response;
 		}
 		return new NotFoundResponse();
+	}
+
+	/**
+	 * Example request with Curl:
+	 * curl -u user:passwd http://my.nc/index.php/apps/dashboard/api/widget-items -H Content-Type:application/json -X POST -d '{"sinceIds":{"github_notifications":"2021-03-22T15:01:10Z"}}'
+	 *
+	 * @NoAdminRequired
+	 * @NoCSRFRequired
+	 */
+	public function getWidgetItems(array $sinceIds = []): DataResponse {
+		$items = [];
+
+		$systemDefault = $this->config->getAppValue('dashboard', 'layout', 'recommendations,spreed,mail,calendar');
+		$userLayout = explode(',', $this->config->getUserValue($this->userId, 'dashboard', 'layout', $systemDefault));
+
+		$widgets = $this->dashboardManager->getWidgets();
+		foreach ($widgets as $widget) {
+			// how can we do better than this method_exists check?
+			if (method_exists($widget, 'getItems') && in_array($widget->getId(), $userLayout)) {
+				$items[$widget->getId()] = array_map(function (WidgetItem $item) {
+					return $item->jsonSerialize();
+				}, $widget->getItems($this->userId, $sinceIds[$widget->getId()] ?? null));
+			}
+		}
+
+		return new DataResponse($items);
 	}
 }

@@ -31,5 +31,7 @@ return [
 		['name' => 'dashboard#updateStatuses', 'url' => '/statuses', 'verb' => 'POST'],
 		['name' => 'dashboard#getBackground', 'url' => '/background', 'verb' => 'GET'],
 		['name' => 'dashboard#setBackground', 'url' => '/background/{type}', 'verb' => 'POST'],
+
+		['name' => 'dashboard#getWidgetItems', 'url' => '/api/widget-items', 'verb' => 'POST'],
 	]
 ];

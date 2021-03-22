@@ -110,7 +110,7 @@ final class WidgetItem {
 	 * @return string
 	 */
 	public function getSinceId(): string {
-		return $this->iconUrl;
+		return $this->sinceId;
 	}
 
 	/**
